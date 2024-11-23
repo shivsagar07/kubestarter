@@ -22,7 +22,7 @@ sudo apt install -y kubelet=1.20.0-00 kubeadm=1.20.0-00 kubectl=1.20.0-00 -y
 # Initialize the Kubernetes Control Plane (Master Node Only)
 sudo kubeadm init
 
-# onfigure kubectl for the Master Node
+# configure kubectl for the Master Node
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
