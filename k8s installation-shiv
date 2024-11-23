@@ -1,0 +1,40 @@
+Run the following command on both Master and Worker Node for Kubeadm
+# use od sudo su is not good practice
+
+sudo apt update
+sudo apt install -y apt-transport-https ca-certificates curl
+sudo apt install docker.io -y
+sudo systemctl restart docker
+sudo systemctl enable docker
+
+# to enable and start docker in single command
+#sudo systemctl enable --now docker 
+
+# ADDING GPG KEY
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg
+
+# Then add the Kubernetes repository:
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+sudo apt update
+# To install specific version like(1.20.0.-00)
+sudo apt install -y kubelet=1.20.0-00 kubeadm=1.20.0-00 kubectl=1.20.0-00 -y
+
+# Initialize the Kubernetes Control Plane (Master Node Only)
+sudo kubeadm init
+
+# onfigure kubectl for the Master Node
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+# Set Up a Pod Network
+kubectl apply -f https://github.com/weaveworks/weave/releases/Dowmload/v2.8.1/weave deamonset-k8s.yml
+
+# run the following command on worker node
+sudo kubeadm reset pre-flight checks
+
+# generat token foe worker node to join
+sudo kubeadm token creat --print-join-command  (after pasting command copy the following token and paste in worker node sudo (token) --v=5) make port 6443 in inbound rule
+
+# check all by
+docker ps 
